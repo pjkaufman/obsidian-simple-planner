@@ -9,11 +9,12 @@ export type OccurrenceInfo = {
     time: string | undefined,
     months: number[],
     day: number,
-    dayOfWeek: number[],
-    week: number[],
+    daysOfWeek: number[],
+    weeks: number[],
     isEaster: boolean,
     isElectionDay: boolean,
     isGoodFriday: boolean,
+    isPalmSunday: boolean,
 };
 
 
