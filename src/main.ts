@@ -1,17 +1,9 @@
 import { App, Editor, MarkdownView, Modal, Notice, Plugin, PluginSettingTab, Setting } from 'obsidian';
+import { DEFAULT_SETTINGS, SimplePlannerSettings } from './types';
 
 // Remember to rename these classes and interfaces!
-
-interface MyPluginSettings {
-	mySetting: string;
-}
-
-const DEFAULT_SETTINGS: MyPluginSettings = {
-	mySetting: 'default'
-}
-
-export default class MyPlugin extends Plugin {
-	settings: MyPluginSettings;
+export default class SimplePlanner extends Plugin {
+	settings: SimplePlannerSettings;
 
 	async onload() {
 		await this.loadSettings();
@@ -108,9 +100,9 @@ class SampleModal extends Modal {
 }
 
 class SampleSettingTab extends PluginSettingTab {
-	plugin: MyPlugin;
+	plugin: SimplePlanner;
 
-	constructor(app: App, plugin: MyPlugin) {
+	constructor(app: App, plugin: SimplePlanner) {
 		super(app, plugin);
 		this.plugin = plugin;
 	}

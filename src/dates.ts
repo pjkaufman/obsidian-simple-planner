@@ -1,4 +1,9 @@
+import {moment} from 'obsidian';
+import { CalendarEvent } from "./types";
 
+// function padout(num: number) { 
+//     return (num < 10) ? '0' + num : num; 
+// }
 
 function xthDayOfMonth(startDate: string, dayOfWeek: number, weekNumber: number) {
     let date;
@@ -36,7 +41,7 @@ function xthDayOfMonth(startDate: string, dayOfWeek: number, weekNumber: number)
     return date.format('YYYYMMDD');
 }
 
-function GetRecurringEvents(date: string | undefined) {
+export function getRecurringEvents(date: string | undefined, events: CalendarEvent[]) {
     if (date == undefined) {
         return '';
     }
@@ -44,9 +49,9 @@ function GetRecurringEvents(date: string | undefined) {
     const applicableEvents = []
     const momentDate = moment(date, 'YYYYMMDD');
     const dayOfWeek = momentDate.day();
-    const eventInfoString = '';
-    for (const i in dayBasedEvents[dayOfWeek]) {
-        let event = dayBasedEvents[dayOfWeek][i];        
+    let eventInfoString = '';
+    for (const i in events[dayOfWeek]) {
+        const event = events[i];        
         if ((event.month === undefined || event.month.includes(momentDate.month())) && (event.week === undefined || xthDayOfMonth(date, dayOfWeek, event.week) === date)) {
             if (event.time === undefined) {
                 eventInfoString = '- [ ] <mark class="' + event.calendar + '">' + event.name + '</mark>';
@@ -63,4 +68,18 @@ function GetRecurringEvents(date: string | undefined) {
     }
 
     return applicableEvents.join('\n');
+}
+
+export function convertEventToString(event: CalendarEvent): string {
+    let eventInfoString = `- [ ] <mark class="${event.calendar}">`
+    if (event.occurrenceInfo.time != undefined) {
+        eventInfoString += event.occurrenceInfo.time + ' ';
+    }
+
+    eventInfoString += `${event.name}</mark>`
+    if (event.description) {
+        eventInfoString += `\n  - ${event.description}`
+    }
+
+    return eventInfoString
 }
