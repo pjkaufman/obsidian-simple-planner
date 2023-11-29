@@ -47,27 +47,29 @@ export function getRecurringEvents(date: string | undefined, events: CalendarEve
   }
 
   const applicableEvents = []
-  const momentDate = moment(date, 'YYYYMMDD');
-  const dayOfWeek = momentDate.day();
-  let eventInfoString = '';
-  for (const i in events[dayOfWeek]) {
-      const event = events[i];        
-      if ((event.month === undefined || event.month.includes(momentDate.month())) && (event.week === undefined || xthDayOfMonth(date, dayOfWeek, event.week) === date)) {
-          if (event.time === undefined) {
-              eventInfoString = '- [ ] <mark class="' + event.calendar + '">' + event.name + '</mark>';
-          } else {
-              eventInfoString = '- [ ] <mark class="' + event.calendar + '">' + event.time + ' ' + event.name + '</mark>';
-          }
+  // const momentDate = moment(date, 'YYYYMMDD');
+  // const dayOfWeek = momentDate.day();  
+  for (const event of events) {
+    if (eventOccursOnDate(date, event)) {
+      applicableEvents.push(convertEventToString(event));
+    }
+      // const event = events[i];        
+      // if ((event.month === undefined || event.month.includes(momentDate.month())) && (event.week === undefined || xthDayOfMonth(date, dayOfWeek, event.week) === date)) {
+      //     if (event.time === undefined) {
+      //         eventInfoString = '- [ ] <mark class="' + event.calendar + '">' + event.name + '</mark>';
+      //     } else {
+      //         eventInfoString = '- [ ] <mark class="' + event.calendar + '">' + event.time + ' ' + event.name + '</mark>';
+      //     }
 
-          if (event.description) {
-              eventInfoString += '\n  - ' + event.description;
-          }
+      //     if (event.description) {
+      //         eventInfoString += '\n  - ' + event.description;
+      //     }
 
-          applicableEvents.push(eventInfoString);
-      }
+      //     applicableEvents.push(eventInfoString);
+      // }
   }
 
-    return applicableEvents.join('\n');
+  return applicableEvents.join('\n');
 }
 
 export function convertEventToString(event: CalendarEvent): string {
