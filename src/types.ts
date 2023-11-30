@@ -17,7 +17,6 @@ export type OccurrenceInfo = {
     isPalmSunday: boolean,
 };
 
-
 export interface SimplePlannerSettings {
 	mySetting: string;
 }

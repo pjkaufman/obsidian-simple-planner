@@ -1,5 +1,5 @@
 import {moment} from 'obsidian';
-import { CalendarEvent } from "./types";
+import {CalendarEvent} from "./types";
 
 function padout(num: number) { 
     return (num < 10) ? '0' + num : num; 
@@ -20,16 +20,20 @@ function xthDayOfMonth(startDate: string, dayOfWeek: number, weekNumber: number)
     return date.format('YYYYMMDD');
   } 
 
+  //@ts-ignore for some reason isoweek is not registerd as a valid value here
   const startOfMonth = moment(startDate, 'YYYYMMDD').utc().startOf('month').startOf('isoweek');
   const dayOne = moment((moment(startDate, "YYYYMMDD").format("YYYYMM") + "01"),"YYYYMMDD");
   if (dayOne.isoWeekday() === 1) {
+    //@ts-ignore for some reason isoweek is not registerd as a valid value here
     date = moment(startDate, 'YYYYMMDD').utc().startOf('month').startOf('isoweek').add(dayOfWeek - 1, 'days')
         .add(weekNumber, 'w');
   }
   else if (dayOne.isoWeekday() <= dayOfWeek) {
+    //@ts-ignore for some reason isoweek is not registerd as a valid value here
     date = moment(startDate, 'YYYYMMDD').utc().startOf('month').startOf('isoweek').add(dayOfWeek - 1, 'days')
         .add(weekNumber - 1, 'w');
   } else {
+    //@ts-ignore for some reason isoweek is not registerd as a valid value here
     date = moment(startDate, 'YYYYMMDD').utc().startOf('month').startOf('isoweek').add(dayOfWeek - 1, 'days')
         .add(weekNumber, 'w');
   }
@@ -88,7 +92,7 @@ export function convertEventToString(event: CalendarEvent): string {
 
 export function eventOccursOnDate(date: string, event: CalendarEvent): boolean {
   if (date == null) {
-      return false
+    return false
   }
 
   if (event.occurrenceInfo.isEaster) {
@@ -113,7 +117,7 @@ export function eventOccursOnDate(date: string, event: CalendarEvent): boolean {
     return false;
   }
 
-  if (event.occurrenceInfo.daysOfWeek != null && event.occurrenceInfo.daysOfWeek.length > 0 && event.occurrenceInfo.daysOfWeek.length && !event.occurrenceInfo.daysOfWeek.includes(momentDate.isoWeekday())) {
+  if (event.occurrenceInfo.daysOfWeek != null && event.occurrenceInfo.daysOfWeek.length > 0 && event.occurrenceInfo.daysOfWeek.length && !event.occurrenceInfo.daysOfWeek.includes(dayOfWeek)) {
     return false;
   }
 
@@ -148,7 +152,7 @@ export function getEaster(year: number) {
   const M = 3 + Math.floor((L + 40)/44);
   const D = L + 28 - 31*Math.floor(M/4);
 
-  return moment(year + padout(M) + padout(D), 'YYYYMMDD');
+  return moment(year + '' + padout(M) + padout(D), 'YYYYMMDD');
 }
 
 function isEaster(date: string) {
