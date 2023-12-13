@@ -1,7 +1,7 @@
 import { App, PluginSettingTab } from "obsidian";
 import SimplePlanner from "./main";
-import { CalendarSetting } from "./ui/components/calendar-setting";
-import { CollapsableSection } from "./ui/components/collapsable-section";
+import { CustomCalendarOption } from "./ui/components/custom-calendar-option";
+import { CustomEventOption } from "./ui/components/custom-event-option";
 
 export class SampleSettingTab extends PluginSettingTab {
 	plugin: SimplePlanner;
@@ -18,8 +18,17 @@ export class SampleSettingTab extends PluginSettingTab {
 
     const divContainer = containerEl.createDiv();
 
-    new CollapsableSection(divContainer, 'calendar-with-checkmark', 'Calendars', (bodyEl: HTMLDivElement)=> {
-      new CalendarSetting(bodyEl, {name: 'Cal1', color: '#784876'})
+    divContainer.createEl('h1', {text: 'Simple Planner'});
+
+    const calendarDiv = divContainer.createDiv();
+
+    new CustomCalendarOption(calendarDiv, this.plugin.settings.calendars, this.app, async () => {
+      await this.plugin.saveSettings();
+    });
+
+    const eventsDiv = divContainer.createDiv();
+    new CustomEventOption(eventsDiv, this.plugin.settings.events, this.plugin.settings.calendars, this.app, async () => {
+      await this.plugin.saveSettings();
     });
 	}
 }
