@@ -13,7 +13,12 @@ export class CalendarSetting {
         .addText((text: TextComponent) => {
           text.setValue(this.calendar.name);
         })
-        .setDesc(this.calendar.color);
+        .addColorPicker((colorPicker) => {
+          colorPicker.setValue(this.calendar.color)
+              .onChange((value: string) => {
+                console.log(value);
+              });
+        });
   }
 
   // async saveValue(value: T) {

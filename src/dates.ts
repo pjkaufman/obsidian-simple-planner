@@ -20,20 +20,20 @@ function xthDayOfMonth(startDate: string, dayOfWeek: number, weekNumber: number)
     return date.format('YYYYMMDD');
   } 
 
-  //@ts-ignore for some reason isoweek is not registerd as a valid value here
+  //@ts-ignore for some reason isoweek is not registered as a valid value here
   const startOfMonth = moment(startDate, 'YYYYMMDD').utc().startOf('month').startOf('isoweek');
   const dayOne = moment((moment(startDate, "YYYYMMDD").format("YYYYMM") + "01"),"YYYYMMDD");
   if (dayOne.isoWeekday() === 1) {
-    //@ts-ignore for some reason isoweek is not registerd as a valid value here
+    //@ts-ignore for some reason isoweek is not registered as a valid value here
     date = moment(startDate, 'YYYYMMDD').utc().startOf('month').startOf('isoweek').add(dayOfWeek - 1, 'days')
         .add(weekNumber, 'w');
   }
   else if (dayOne.isoWeekday() <= dayOfWeek) {
-    //@ts-ignore for some reason isoweek is not registerd as a valid value here
+    //@ts-ignore for some reason isoweek is not registered as a valid value here
     date = moment(startDate, 'YYYYMMDD').utc().startOf('month').startOf('isoweek').add(dayOfWeek - 1, 'days')
         .add(weekNumber - 1, 'w');
   } else {
-    //@ts-ignore for some reason isoweek is not registerd as a valid value here
+    //@ts-ignore for some reason isoweek is not registered as a valid value here
     date = moment(startDate, 'YYYYMMDD').utc().startOf('month').startOf('isoweek').add(dayOfWeek - 1, 'days')
         .add(weekNumber, 'w');
   }
