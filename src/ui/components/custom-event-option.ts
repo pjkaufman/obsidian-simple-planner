@@ -1,7 +1,8 @@
-import {Setting, App, TextComponent} from 'obsidian';
+import {Setting, App} from 'obsidian';
 import {AddCustomRow} from './add-custom-row';
 import {Calendar, CalendarEvent} from '../../types';
 import { AddEditEventModal } from '../modals/add-edit-event-modal';
+import { eventToDisplayString } from 'src/event';
 
 export class CustomEventOption extends AddCustomRow {
   constructor(containerEl: HTMLElement, public events: CalendarEvent[], private calendars: Calendar[], private app: App, saveSettings: () => void) {
@@ -27,10 +28,12 @@ export class CustomEventOption extends AddCustomRow {
               isPalmSunday: false,
             },
           };
-          new AddEditEventModal(this.app, newEvent, this.calendars).open();
-          // this.events.push(newEvent);
-          // this.saveSettings();
-          // this.addEvent(newEvent, this.events.length - 1, true);
+
+          new AddEditEventModal(this.app, 'Add Event', newEvent, this.calendars, (event: CalendarEvent) => {
+            this.events.push(event);
+            this.saveSettings();
+            this.addEvent(event, this.events.length - 1);
+          }).open();
         });
 
     this.display();
@@ -42,32 +45,8 @@ export class CustomEventOption extends AddCustomRow {
     });
   }
 
-  private addEvent(event: CalendarEvent, index: number, focusOnCommand = false) {
-    new Setting(this.inputElDiv)
-        .addText((text: TextComponent) => {
-          text.setValue(event.name)
-            .onChange((eventName: string) => {
-              event.name = eventName;
-
-              this.events[index] = event;
-              this.saveSettings();
-            });
-
-          text.inputEl.setAttr('tabIndex', index);
-
-          if (focusOnCommand) {
-            text.inputEl.focus();
-          }
-        })
-        // .addColorPicker((colorPicker) => {
-        //   colorPicker.setValue(event.color)
-        //     .onChange((color: string) => {
-        //       event.color = color;
-
-        //       this.events[index] = event;
-        //       this.saveSettings();
-        //     });
-        // })
+  private addEvent(event: CalendarEvent, index: number) {
+    new Setting(this.inputElDiv).setName(eventToDisplayString(event))
         .addExtraButton((cb) => {
           cb.setIcon('up-chevron-glyph')
               .setTooltip('Move down')

@@ -1,19 +1,18 @@
-import {App, DropdownComponent, Modal, Setting, TextComponent} from "obsidian";
+import {App, DropdownComponent, Modal, Notice, Setting, TextComponent} from "obsidian";
 import {Calendar, CalendarEvent} from "../../types";
-
-const daysOfWeekLetters = ['U', 'M', 'T', 'W', 'R', 'F', 'S'];
-const monthAbbreviations = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-const weekOfMonth = ['1st', '2nd', '3rd', '4th', 'Last'];
+import { daysOfWeekLetters, monthAbbreviations, weekOfMonth } from "../../event";
 
 export class AddEditEventModal extends Modal {
-	constructor(app: App, public event: CalendarEvent, public calendars: Calendar[]) {
+	constructor(app: App, public title: string, public event: CalendarEvent, public calendars: Calendar[], private saveCallback: (event: CalendarEvent) => void) {
 		super(app);
 	}
 
 	onOpen() {
 		const {contentEl} = this;
 
-		contentEl.createEl('h2', {text: 'Add Event'});
+		this.modalEl.addClass('confirm-modal');
+
+		contentEl.createEl('h2', {text: this.title});
 
 		new Setting(contentEl).setName('Event Name:')
 			.addText((text: TextComponent) => {
@@ -55,6 +54,7 @@ export class AddEditEventModal extends Modal {
 		const timeSetting = new Setting(occurrenceDiv).setName('Time:')
 			.addText((text: TextComponent) => {
 				timeText = text.setValue(this.event.occurrenceInfo.time ?? '')
+					.setDisabled(this.event.occurrenceInfo.time == undefined || this.event.occurrenceInfo.time.trim() === '')
 					.onChange((time: string) => {
 						this.event.occurrenceInfo.time = time;
 					});
@@ -73,6 +73,21 @@ export class AddEditEventModal extends Modal {
 
 				timeText.setDisabled(text.inputEl.checked);
 			});
+		});
+
+		new Setting(occurrenceDiv).setName('Day of the Month:')
+			.addText((text: TextComponent) => {
+			text.inputEl.type = 'number';
+			text.setValue(this.event.occurrenceInfo.day + '')
+				.onChange((eventDay: string) => {
+					let day = this.event.occurrenceInfo.day;
+					const num = parseInt("10", 10);
+					if (typeof num == 'number') {
+						day = num;
+					}
+
+					this.event.occurrenceInfo.day = day;
+				});
 		});
 
 		const dayOfWeekSetting = new Setting(occurrenceDiv).setName('Days of Week:');
@@ -194,6 +209,89 @@ export class AddEditEventModal extends Modal {
 					}
 				});
 			});
+
+			this.contentEl.createDiv('modal-button-container', (buttonsEl) => {
+				buttonsEl.createEl('button', {text: 'Cancel'}).addEventListener('click', () => this.close());
+	
+				const btnSubmit = buttonsEl.createEl('button', {
+					attr: {type: 'submit'},
+					cls: 'mod-cta',
+					text: 'Save Event',
+				});
+				btnSubmit.addEventListener('click', async (_e) => {
+					this.save();
+				});
+				setTimeout(() => {
+					btnSubmit.focus();
+				}, 50);
+			});
+	}
+
+	isValidEvent(): boolean {
+		let isValid = true;
+		if (this.event.name.trim() == '') {
+			isValid = false;
+		}
+
+		if (this.event.calendar.trim() == '') {
+			isValid = false;
+		}
+
+		if (this.event.occurrenceInfo.day > 31 ) {
+			isValid = false;
+		}
+		
+		if (this.event.occurrenceInfo.time && (this.event.occurrenceInfo.isEaster || this.event.occurrenceInfo.isElectionDay || this.event.occurrenceInfo.isGoodFriday || this.event.occurrenceInfo.isPalmSunday)) {
+			isValid = false;
+		}
+
+		return isValid;
+	}
+
+	getEventValidationMsg(): string {
+		const validationMessages: string[] = [];
+		if (this.event.name.trim() == '') {
+			validationMessages.push('Event name must have a value');
+		}
+
+		if (this.event.calendar.trim() == '') {
+			validationMessages.push('Event must have a calendar');
+		}
+
+		if (this.event.occurrenceInfo.day > 31 ) {
+			validationMessages.push('Event day must be less than 32');
+		}
+		
+		if (this.event.occurrenceInfo.time && (this.event.occurrenceInfo.isEaster || this.event.occurrenceInfo.isElectionDay || this.event.occurrenceInfo.isGoodFriday || this.event.occurrenceInfo.isPalmSunday)) {
+			validationMessages.push('Event time cannot be set for special holiday events');
+		}
+
+		if (validationMessages.length > 0) {
+			return `Event is not valid:\n${validationMessages.join('\n')}`;
+		}
+
+		return '';
+	}
+
+	save() {
+		if (this.event.occurrenceInfo.time && this.event.occurrenceInfo.time.trim() === '') {
+			this.event.occurrenceInfo.time = undefined;
+		}
+
+		if (!this.isValidEvent()) {
+			let validationMessage = this.getEventValidationMsg();
+			if (validationMessage === '') {
+				validationMessage = 'Event is not valid.';
+			}
+
+			new Notice(validationMessage);
+
+			return;
+		}
+
+		this.saveCallback(this.event);
+
+		this.close();
 	}
 
 	onClose() {
