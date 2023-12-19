@@ -39,7 +39,7 @@ export class AddEditEventModal extends Modal {
 					for (const calendarName of calendars) {
 						for (const calendar of this.calendars) {
 							if (calendarName === calendar.name) {
-								existingCalendars.push(calendar);
+								existingCalendars.push(calendar.name);
 								break;
 							}
 						}
@@ -297,7 +297,5 @@ export class AddEditEventModal extends Modal {
 	onClose() {
 		const {contentEl} = this;
 		contentEl.empty();
-
-		console.log(this.event);
 	}
 }

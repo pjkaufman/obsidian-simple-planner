@@ -6,13 +6,13 @@ export const weekOfMonth = ['1st', '2nd', '3rd', '4th', 'Last'];
 
 export function eventToDisplayString(event: CalendarEvent): string {
   let eventString = event.name;
-  if (event.description && event.description.trim() != '') {
+  if (event.description && event.description && event.description.trim() != '') {
     eventString += '; ' + event.description;
   }
 
   // TODO: finish off this logic
 
-  if (event.occurrenceInfo.time && event.description.trim() != '') {
+  if (event.occurrenceInfo.time && event.description && event.description.trim() != '') {
     eventString += '; ' + event.occurrenceInfo.time;
   }
 

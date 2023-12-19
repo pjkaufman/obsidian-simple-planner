@@ -66,6 +66,17 @@ export class CustomEventOption extends AddCustomRow {
               });
         })
         .addExtraButton((cb) => {
+          cb.setIcon('pencil')
+              .setTooltip('Edit')
+              .onClick(() => {
+                new AddEditEventModal(this.app, 'Edit Event', this.events[index], this.calendars, (event: CalendarEvent) => {
+                  this.events[index] = event;
+                  this.saveSettings();
+                  this.resetInputEls();
+                }).open();               
+              });
+        })
+        .addExtraButton((cb) => {
           cb.setIcon('cross')
               .setTooltip('Delete')
               .onClick(() => {
