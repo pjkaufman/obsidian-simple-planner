@@ -1,6 +1,7 @@
 import {Plugin} from 'obsidian';
-import {DEFAULT_SETTINGS, SimplePlannerSettings} from './types';
+import {CalendarEvent, DEFAULT_SETTINGS, SimplePlannerSettings} from './types';
 import {SampleSettingTab} from './settings';
+import {getRecurringEventsForDay} from './dates';
 
 // Remember to rename these classes and interfaces!
 export default class SimplePlanner extends Plugin {
@@ -15,6 +16,10 @@ export default class SimplePlanner extends Plugin {
 
   onunload() {
 
+  }
+
+  getEventsForDay(date: string | undefined, events: CalendarEvent[], calendarsToInclude: string[] = [], calendarsToIgnore: string[] = []): string {
+    return getRecurringEventsForDay(date, events, calendarsToInclude, calendarsToIgnore);
   }
 
   async loadSettings() {
