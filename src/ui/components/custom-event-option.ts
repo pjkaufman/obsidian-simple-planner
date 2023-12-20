@@ -2,6 +2,7 @@ import {Setting, App} from 'obsidian';
 import {AddCustomRow} from './add-custom-row';
 import {Calendar, CalendarEvent} from '../../types';
 import {AddEditEventModal} from '../modals/add-edit-event-modal';
+import {daysOfWeekLetters, monthAbbreviations, weekOfMonth} from '../../event';
 
 export class CustomEventOption extends AddCustomRow {
   constructor(containerEl: HTMLElement, public events: CalendarEvent[], private calendars: Calendar[], private app: App, saveSettings: () => void) {
@@ -101,7 +102,11 @@ export class CustomEventOption extends AddCustomRow {
 function createEventFragment(event: CalendarEvent): DocumentFragment {
   // eslint-disable-next-line no-undef
   return createFragment((el: DocumentFragment) => {
-    el.createSpan({text: event.name});
+    const nameHeader =el.createSpan({text: event.name});
+    if (event.calendar && event.calendar.trim() != '') {
+      nameHeader.createEl('i', {text: ` (${event.calendar})`});
+    }
+
     el.createEl('br');
 
     if (event.description && event.description.trim() != '') {
@@ -110,17 +115,55 @@ function createEventFragment(event: CalendarEvent): DocumentFragment {
       el.createEl('br');
     }
 
-    if (event.occurrenceInfo.time && event.description && event.occurrenceInfo.time.trim() != '') {
-      el.createSpan({text: event.occurrenceInfo.time});
-      el.createEl('br');
+    if (!event.occurrenceInfo || event.occurrenceInfo.isElectionDay || event.occurrenceInfo.isEaster || event.occurrenceInfo.isGoodFriday || event.occurrenceInfo.isPalmSunday) {
+      return;
     }
 
-    // TODO: finish off this logic
 
-    // if (event.occurrenceInfo.time && event.description && event.description.trim() != '') {
-    //   eventString += '; ' + event.occurrenceInfo.time;
-    // }
+    let occurrenceText = '';
+    if (event.occurrenceInfo.months && event.occurrenceInfo.months.length > 0) {
+      occurrenceText += 'every';
 
-    // return eventString;
+      for (const month of event.occurrenceInfo.months) {
+        occurrenceText += ' ' + monthAbbreviations[month] + ',';
+      }
+
+      occurrenceText = occurrenceText.substring(0, occurrenceText.length -1) + ' ';
+    }
+
+    if (event.occurrenceInfo.weeks && event.occurrenceInfo.weeks.length > 0) {
+      occurrenceText += 'on the';
+
+      for (const week of event.occurrenceInfo.weeks) {
+        occurrenceText += ' ' + weekOfMonth[week-1] + ',';
+      }
+
+      const weekText = event.occurrenceInfo.weeks.length > 1 ? ' weeks' : ' week';
+      occurrenceText = occurrenceText.substring(0, occurrenceText.length -1) + weekText + ' ';
+    }
+
+    if (event.occurrenceInfo.daysOfWeek && event.occurrenceInfo.daysOfWeek.length > 0) {
+      occurrenceText += 'on ';
+
+      for (const dayOfWeek of event.occurrenceInfo.daysOfWeek) {
+        occurrenceText += daysOfWeekLetters[dayOfWeek];
+      }
+
+      occurrenceText += ' ';
+    }
+
+    if (event.occurrenceInfo.day > 0) {
+      occurrenceText += 'on day ' + event.occurrenceInfo.day + ' ';
+    }
+
+    if (event.occurrenceInfo.time && event.occurrenceInfo.time.trim() != '') {
+      occurrenceText += 'at ' + event.occurrenceInfo.time;
+    }
+
+    occurrenceText = occurrenceText.trim();
+
+    if (occurrenceText != '') {
+      el.createSpan({text: occurrenceText.charAt(0).toUpperCase() + occurrenceText.substring(1)});
+    }
   });
 }
