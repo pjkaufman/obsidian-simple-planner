@@ -24,12 +24,12 @@ export type Calendar = {
 
 export interface SimplePlannerSettings {
   events: CalendarEvent[];
-	calendars: Calendar[];
+  calendars: Calendar[];
   plannerBaseFolderPath: string;
 }
 
 export const DEFAULT_SETTINGS: SimplePlannerSettings = {
-	events: [],
+  events: [],
   calendars: [],
   plannerBaseFolderPath: '',
 };

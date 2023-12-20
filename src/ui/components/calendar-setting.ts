@@ -1,6 +1,6 @@
 
 import {Setting, TextComponent} from 'obsidian';
-import { Calendar } from 'src/types';
+import {Calendar} from 'src/types';
 
 export class CalendarSetting {
   setting: Setting;

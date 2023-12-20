@@ -1,8 +1,7 @@
 import {Setting, App} from 'obsidian';
 import {AddCustomRow} from './add-custom-row';
 import {Calendar, CalendarEvent} from '../../types';
-import { AddEditEventModal } from '../modals/add-edit-event-modal';
-import { eventToDisplayString } from 'src/event';
+import {AddEditEventModal} from '../modals/add-edit-event-modal';
 
 export class CustomEventOption extends AddCustomRow {
   constructor(containerEl: HTMLElement, public events: CalendarEvent[], private calendars: Calendar[], private app: App, saveSettings: () => void) {
@@ -46,7 +45,7 @@ export class CustomEventOption extends AddCustomRow {
   }
 
   private addEvent(event: CalendarEvent, index: number) {
-    new Setting(this.inputElDiv).setName(eventToDisplayString(event))
+    new Setting(this.inputElDiv).setName(createEventFragment(event))
         .addExtraButton((cb) => {
           cb.setIcon('up-chevron-glyph')
               .setTooltip('Move down')
@@ -73,7 +72,7 @@ export class CustomEventOption extends AddCustomRow {
                   this.events[index] = event;
                   this.saveSettings();
                   this.resetInputEls();
-                }).open();               
+                }).open();
               });
         })
         .addExtraButton((cb) => {
@@ -97,4 +96,31 @@ export class CustomEventOption extends AddCustomRow {
     this.events[fromIndex] = this.events[toIndex];
     this.events[toIndex] = element;
   }
+}
+
+function createEventFragment(event: CalendarEvent): DocumentFragment {
+  // eslint-disable-next-line no-undef
+  return createFragment((el: DocumentFragment) => {
+    el.createSpan({text: event.name});
+    el.createEl('br');
+
+    if (event.description && event.description.trim() != '') {
+      el.createSpan({text: event.description, cls: 'setting-item-description'});
+      el.createEl('br');
+      el.createEl('br');
+    }
+
+    if (event.occurrenceInfo.time && event.description && event.occurrenceInfo.time.trim() != '') {
+      el.createSpan({text: event.occurrenceInfo.time});
+      el.createEl('br');
+    }
+
+    // TODO: finish off this logic
+
+    // if (event.occurrenceInfo.time && event.description && event.description.trim() != '') {
+    //   eventString += '; ' + event.occurrenceInfo.time;
+    // }
+
+    // return eventString;
+  });
 }

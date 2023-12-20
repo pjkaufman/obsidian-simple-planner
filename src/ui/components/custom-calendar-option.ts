@@ -29,12 +29,12 @@ export class CustomCalendarOption extends AddCustomRow {
     new Setting(this.inputElDiv)
         .addText((text: TextComponent) => {
           text.setValue(calendar.name)
-            .onChange((calendarName: string) => {
-              calendar.name = calendarName;
+              .onChange((calendarName: string) => {
+                calendar.name = calendarName;
 
-              this.calendars[index] = calendar;
-              this.saveSettings();
-            });
+                this.calendars[index] = calendar;
+                this.saveSettings();
+              });
 
           text.inputEl.setAttr('tabIndex', index);
 
@@ -44,12 +44,12 @@ export class CustomCalendarOption extends AddCustomRow {
         })
         .addColorPicker((colorPicker) => {
           colorPicker.setValue(calendar.color)
-            .onChange((color: string) => {
-              calendar.color = color;
+              .onChange((color: string) => {
+                calendar.color = color;
 
-              this.calendars[index] = calendar;
-              this.saveSettings();
-            });
+                this.calendars[index] = calendar;
+                this.saveSettings();
+              });
         })
         .addExtraButton((cb) => {
           cb.setIcon('up-chevron-glyph')

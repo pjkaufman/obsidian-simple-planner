@@ -1,4 +1,4 @@
-import { CalendarEvent } from "./types";
+import {CalendarEvent} from './types';
 
 export const daysOfWeekLetters = ['U', 'M', 'T', 'W', 'R', 'F', 'S'];
 export const monthAbbreviations = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
