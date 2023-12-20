@@ -1,5 +1,5 @@
 import {Plugin} from 'obsidian';
-import {CalendarEvent, DEFAULT_SETTINGS, SimplePlannerSettings} from './types';
+import {DEFAULT_SETTINGS, SimplePlannerSettings} from './types';
 import {SampleSettingTab} from './settings';
 import {getRecurringEventsForDay, getWeeklyMonthlyYearlyEventsForDateRange} from './dates';
 
