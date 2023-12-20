@@ -1,7 +1,7 @@
 import {Plugin} from 'obsidian';
 import {CalendarEvent, DEFAULT_SETTINGS, SimplePlannerSettings} from './types';
 import {SampleSettingTab} from './settings';
-import {getRecurringEventsForDay} from './dates';
+import {getRecurringEventsForDay, getWeeklyMonthlyYearlyEventsForDateRange} from './dates';
 
 // Remember to rename these classes and interfaces!
 export default class SimplePlanner extends Plugin {
@@ -18,8 +18,12 @@ export default class SimplePlanner extends Plugin {
 
   }
 
-  getEventsForDay(date: string | undefined, events: CalendarEvent[], calendarsToInclude: string[] = [], calendarsToIgnore: string[] = []): string {
-    return getRecurringEventsForDay(date, events, calendarsToInclude, calendarsToIgnore);
+  getEventsForDay(date: string | undefined, calendarsToInclude: string[] = [], calendarsToIgnore: string[] = []): string {
+    return getRecurringEventsForDay(date, this.settings.events, calendarsToInclude, calendarsToIgnore);
+  }
+
+  getWeeklyMonthlyYearlyEventsForRange(startDate: string | undefined, endDate: string | undefined, calendarsToInclude: string[] = [], calendarsToIgnore: string[] = []): string[] | string[][] {
+    return getWeeklyMonthlyYearlyEventsForDateRange(startDate, endDate, this.settings.events, calendarsToInclude, calendarsToIgnore);
   }
 
   async loadSettings() {
