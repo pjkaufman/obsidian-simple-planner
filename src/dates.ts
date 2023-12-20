@@ -53,27 +53,7 @@ export function getRecurringEventsForDay(date: string | undefined, events: Calen
   // const momentDate = moment(date, 'YYYYMMDD');
   // const dayOfWeek = momentDate.day();
   for (const event of events) {
-    let skip = calendarsToInclude && calendarsToInclude.length > 0;
-    for (const calendar of calendarsToInclude) {
-      if (event.calendar.includes(calendar)) {
-        skip = false;
-        break;
-      }
-    }
-
-    if (skip) {
-      continue;
-    }
-
-    skip = calendarsToIgnore && calendarsToIgnore.length > 0;
-    for (const calendar of calendarsToIgnore) {
-      if (event.calendar.includes(calendar)) {
-        skip = true;
-        break;
-      }
-    }
-
-    if (skip) {
+    if (skipEvent(event, calendarsToInclude, calendarsToIgnore)) {
       continue;
     }
 
@@ -208,4 +188,70 @@ function isElectionDay(date: string) {
   }
 
   return electionDay === date;
+}
+
+function skipEvent(event: CalendarEvent, calendarsToInclude: string[], calendarsToIgnore: string[]): boolean {
+  if ((!calendarsToInclude || calendarsToInclude.length == 0) && (!calendarsToIgnore || calendarsToIgnore.length == 0) ) {
+    return false;
+  }
+
+  for (const calendar of calendarsToIgnore) {
+    if (event.calendar.includes(calendar)) {
+      return true;
+    }
+  }
+
+  let skip = true;
+  for (const calendar of calendarsToInclude) {
+    if (event.calendar.includes(calendar)) {
+      skip = false;
+      break;
+    }
+  }
+
+  return skip;
+}
+
+export function getWeeklyMonthlyYearlyEventsForDateRange(startDate: string | undefined, endDate: string | undefined, events: CalendarEvent[], calendarsToInclude: string[] = [], calendarsToIgnore: string[] = []): string[] | string[][] {
+  if (startDate == undefined) {
+    return [];
+  }
+
+  if (endDate == undefined) {
+    endDate = startDate;
+  }
+  const start = moment(startDate, 'YYYYMMDD');
+  const end = moment(endDate, 'YYYYMMDD');
+  const currentDate = moment(startDate, 'YYYYMMDD');
+  const amountOfDays = end.diff(start, 'days') + 1;
+  let i = 0;
+  const eventsForRange: string[][] = [];
+  while (i < amountOfDays) {
+    const eventsForDate: string[] = [];
+    // const currentMonth = currentDate.month();
+    const currentDateString = currentDate.format('YYYYMMDD');
+    for (const event of events) {
+      if (skipEvent(event, calendarsToInclude, calendarsToIgnore)) {
+        continue;
+      }
+
+      if (event.occurrenceInfo.day == 0 && event.occurrenceInfo.daysOfWeek && event.occurrenceInfo.daysOfWeek.length == 0&& event.occurrenceInfo.weeks && event.occurrenceInfo.weeks.length == 0 && event.occurrenceInfo.months && event.occurrenceInfo.months.length == 0 && !event.occurrenceInfo.isEaster && !event.occurrenceInfo.isElectionDay && !event.occurrenceInfo.isGoodFriday && !event.occurrenceInfo.isPalmSunday) {
+        continue;
+      }
+
+      if (eventOccursOnDate(currentDateString, event)) {
+        eventsForDate.push(convertEventToString(event));
+      }
+    }
+
+    eventsForRange.push(eventsForDate);
+    currentDate.add(1, 'days');
+    ++i;
+  }
+
+  if (amountOfDays === 1) {
+    return eventsForRange[0];
+  }
+
+  return eventsForRange;
 }
