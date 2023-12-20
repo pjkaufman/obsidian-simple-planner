@@ -1,5 +1,5 @@
-import { eventOccursOnDate } from '../src/dates';
-import { CalendarEvent } from '../src/types';
+import {eventOccursOnDate} from '../src/dates';
+import {CalendarEvent} from '../src/types';
 
 type eventOccursOnDateTestCase = {
   name: string,

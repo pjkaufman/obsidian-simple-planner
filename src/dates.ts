@@ -1,8 +1,8 @@
 import {moment} from 'obsidian';
-import {CalendarEvent} from "./types";
+import {CalendarEvent} from './types';
 
-function padout(num: number) { 
-    return (num < 10) ? '0' + num : num; 
+function padout(num: number) {
+  return (num < 10) ? '0' + num : num;
 }
 
 function xthDayOfMonth(startDate: string, dayOfWeek: number, weekNumber: number) {
@@ -10,30 +10,29 @@ function xthDayOfMonth(startDate: string, dayOfWeek: number, weekNumber: number)
   if (weekNumber === 5) { // last instances in month
     const endOfMonth = moment(startDate, 'YYYYMMDD').utc().endOf('month');
     if (endOfMonth.isoWeekday() === dayOfWeek) {
-    date = endOfMonth;
+      date = endOfMonth;
     } else if (endOfMonth.isoWeekday() < dayOfWeek) {
-    date = endOfMonth.subtract(1, 'w').add(dayOfWeek - endOfMonth.isoWeekday(), 'days');
+      date = endOfMonth.subtract(1, 'w').add(dayOfWeek - endOfMonth.isoWeekday(), 'days');
     } else {
-    date = endOfMonth.subtract(endOfMonth.isoWeekday() - dayOfWeek, 'days');
+      date = endOfMonth.subtract(endOfMonth.isoWeekday() - dayOfWeek, 'days');
     }
 
     return date.format('YYYYMMDD');
-  } 
+  }
 
-  //@ts-ignore for some reason isoweek is not registered as a valid value here
+  // @ts-ignore for some reason isoweek is not registered as a valid value here
   const startOfMonth = moment(startDate, 'YYYYMMDD').utc().startOf('month').startOf('isoweek');
-  const dayOne = moment((moment(startDate, "YYYYMMDD").format("YYYYMM") + "01"),"YYYYMMDD");
+  const dayOne = moment((moment(startDate, 'YYYYMMDD').format('YYYYMM') + '01'), 'YYYYMMDD');
   if (dayOne.isoWeekday() === 1) {
-    //@ts-ignore for some reason isoweek is not registered as a valid value here
+    // @ts-ignore for some reason isoweek is not registered as a valid value here
     date = moment(startDate, 'YYYYMMDD').utc().startOf('month').startOf('isoweek').add(dayOfWeek - 1, 'days')
         .add(weekNumber, 'w');
-  }
-  else if (dayOne.isoWeekday() <= dayOfWeek) {
-    //@ts-ignore for some reason isoweek is not registered as a valid value here
+  } else if (dayOne.isoWeekday() <= dayOfWeek) {
+    // @ts-ignore for some reason isoweek is not registered as a valid value here
     date = moment(startDate, 'YYYYMMDD').utc().startOf('month').startOf('isoweek').add(dayOfWeek - 1, 'days')
         .add(weekNumber - 1, 'w');
   } else {
-    //@ts-ignore for some reason isoweek is not registered as a valid value here
+    // @ts-ignore for some reason isoweek is not registered as a valid value here
     date = moment(startDate, 'YYYYMMDD').utc().startOf('month').startOf('isoweek').add(dayOfWeek - 1, 'days')
         .add(weekNumber, 'w');
   }
@@ -45,70 +44,70 @@ function xthDayOfMonth(startDate: string, dayOfWeek: number, weekNumber: number)
   return date.format('YYYYMMDD');
 }
 
-export function getRecurringEvents(date: string | undefined, events: CalendarEvent[]) {
+export function getRecurringEventsForDay(date: string | undefined, events: CalendarEvent[]) {
   if (date == undefined) {
     return '';
   }
 
-  const applicableEvents = []
+  const applicableEvents = [];
   // const momentDate = moment(date, 'YYYYMMDD');
-  // const dayOfWeek = momentDate.day();  
+  // const dayOfWeek = momentDate.day();
   for (const event of events) {
     if (eventOccursOnDate(date, event)) {
       applicableEvents.push(convertEventToString(event));
     }
-      // const event = events[i];        
-      // if ((event.month === undefined || event.month.includes(momentDate.month())) && (event.week === undefined || xthDayOfMonth(date, dayOfWeek, event.week) === date)) {
-      //     if (event.time === undefined) {
-      //         eventInfoString = '- [ ] <mark class="' + event.calendar + '">' + event.name + '</mark>';
-      //     } else {
-      //         eventInfoString = '- [ ] <mark class="' + event.calendar + '">' + event.time + ' ' + event.name + '</mark>';
-      //     }
+    // const event = events[i];
+    // if ((event.month === undefined || event.month.includes(momentDate.month())) && (event.week === undefined || xthDayOfMonth(date, dayOfWeek, event.week) === date)) {
+    //     if (event.time === undefined) {
+    //         eventInfoString = '- [ ] <mark class="' + event.calendar + '">' + event.name + '</mark>';
+    //     } else {
+    //         eventInfoString = '- [ ] <mark class="' + event.calendar + '">' + event.time + ' ' + event.name + '</mark>';
+    //     }
 
-      //     if (event.description) {
-      //         eventInfoString += '\n  - ' + event.description;
-      //     }
+    //     if (event.description) {
+    //         eventInfoString += '\n  - ' + event.description;
+    //     }
 
-      //     applicableEvents.push(eventInfoString);
-      // }
+    //     applicableEvents.push(eventInfoString);
+    // }
   }
 
   return applicableEvents.join('\n');
 }
 
 export function convertEventToString(event: CalendarEvent): string {
-    let eventInfoString = `- [ ] <mark class="${event.calendar}">`
-    if (event.occurrenceInfo.time != undefined) {
-        eventInfoString += event.occurrenceInfo.time + ' ';
-    }
+  let eventInfoString = `- [ ] <mark class="${event.calendar}">`;
+  if (event.occurrenceInfo.time != undefined) {
+    eventInfoString += event.occurrenceInfo.time + ' ';
+  }
 
-    eventInfoString += `${event.name}</mark>`
-    if (event.description) {
-        eventInfoString += `\n  - ${event.description}`
-    }
+  eventInfoString += `${event.name}</mark>`;
+  if (event.description) {
+    eventInfoString += `\n  - ${event.description}`;
+  }
 
-    return eventInfoString
+  return eventInfoString;
 }
 
 export function eventOccursOnDate(date: string, event: CalendarEvent): boolean {
   if (date == null) {
-    return false
+    return false;
   }
 
   if (event.occurrenceInfo.isEaster) {
-    return isEaster(date)
+    return isEaster(date);
   }
 
   if (event.occurrenceInfo.isGoodFriday) {
-    return isGoodFriday(date)
+    return isGoodFriday(date);
   }
 
   if (event.occurrenceInfo.isPalmSunday) {
-    return isPalmSunday(date)
+    return isPalmSunday(date);
   }
 
   if (event.occurrenceInfo.isElectionDay) {
-    return isElectionDay(date)
+    return isElectionDay(date);
   }
 
   const momentDate = moment(date, 'YYYYMMDD');
@@ -125,7 +124,7 @@ export function eventOccursOnDate(date: string, event: CalendarEvent): boolean {
     return false;
   }
 
-  if (event.occurrenceInfo.weeks != null && event.occurrenceInfo.weeks.length > 0){
+  if (event.occurrenceInfo.weeks != null && event.occurrenceInfo.weeks.length > 0) {
     const length = event.occurrenceInfo.weeks.length;
     for (let i = 0; i < length; i++) {
       if (xthDayOfMonth(date, dayOfWeek, event.occurrenceInfo.weeks[i]) === date) {
@@ -165,10 +164,10 @@ function isEaster(date: string) {
 function isGoodFriday(date: string) {
   const momentDate = moment(date, 'YYYYMMDD');
   const goodFriday = getEaster(momentDate.year()).subtract(2, 'days');
-  
+
   return momentDate.month() === goodFriday.month() && momentDate.format('DD') === goodFriday.format('DD');
 }
-  
+
 function isPalmSunday(date: string) {
   const momentDate = moment(date, 'YYYYMMDD');
   const palmSunday = getEaster(momentDate.year()).subtract(7, 'days');

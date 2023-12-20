@@ -1,5 +1,5 @@
-import { convertEventToString } from '../src/dates';
-import { CalendarEvent } from '../src/types';
+import {convertEventToString} from '../src/dates';
+import {CalendarEvent} from '../src/types';
 
 type calendarEventToStringTestCase = {
   name: string,
