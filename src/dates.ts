@@ -44,7 +44,7 @@ function xthDayOfMonth(startDate: string, dayOfWeek: number, weekNumber: number)
   return date.format('YYYYMMDD');
 }
 
-export function getRecurringEventsForDay(date: string | undefined, events: CalendarEvent[]) {
+export function getRecurringEventsForDay(date: string | undefined, events: CalendarEvent[], calendarsToInclude: string[] = [], calendarsToIgnore: string[] = []) {
   if (date == undefined) {
     return '';
   }
@@ -53,6 +53,30 @@ export function getRecurringEventsForDay(date: string | undefined, events: Calen
   // const momentDate = moment(date, 'YYYYMMDD');
   // const dayOfWeek = momentDate.day();
   for (const event of events) {
+    let skip = calendarsToInclude && calendarsToInclude.length > 0;
+    for (const calendar of calendarsToInclude) {
+      if (event.calendar.includes(calendar)) {
+        skip = false;
+        break;
+      }
+    }
+
+    if (skip) {
+      continue;
+    }
+
+    skip = calendarsToIgnore && calendarsToIgnore.length > 0;
+    for (const calendar of calendarsToIgnore) {
+      if (event.calendar.includes(calendar)) {
+        skip = true;
+        break;
+      }
+    }
+
+    if (skip) {
+      continue;
+    }
+
     if (eventOccursOnDate(date, event)) {
       applicableEvents.push(convertEventToString(event));
     }
