@@ -80,7 +80,7 @@ export function getRecurringEventsForDay(date: string | undefined, events: Calen
 }
 
 export function convertEventToString(event: CalendarEvent): string {
-  let eventInfoString = `- [ ] <mark class="${event.calendar}">`;
+  let eventInfoString = `- [ ] <mark class="${event.calendar.replaceAll('|', ' ')}">`;
   if (event.occurrenceInfo.time != undefined) {
     eventInfoString += event.occurrenceInfo.time + ' ';
   }

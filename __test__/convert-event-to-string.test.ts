@@ -68,6 +68,26 @@ const getCalendarEventToStringTestCases: calendarEventToStringTestCase[] = [
     },
     expectedString: `- [ ] <mark class="fun-times">16:00 - 19:00 Running of the Bulls</mark>\n  - Run for fun!`,
   },
+  {
+    name: 'An event with a multiple calendars should get displayed properly',
+    event: {
+      name: 'An event',
+      description: '',
+      calendar: 'personal|other',
+      occurrenceInfo: {
+        time: '16:00 - 19:00',
+        months: [],
+        day: 0,
+        daysOfWeek: [],
+        weeks: [],
+        isEaster: false,
+        isElectionDay: false,
+        isGoodFriday: false,
+        isPalmSunday: false,
+      },
+    },
+    expectedString: `- [ ] <mark class="personal other">16:00 - 19:00 An event</mark>`,
+  },
 ];
 
 describe('Convert Event to String', () => {
