@@ -181,6 +181,10 @@ function isPalmSunday(date: string) {
 }
 
 function isElectionDay(date: string) {
+  if (moment(date, 'YYYYMMDD').month() != 10) {
+    return false;
+  }
+
   let electionDay = xthDayOfMonth(date, 2, 1);
 
   if (electionDay.endsWith('01')) {

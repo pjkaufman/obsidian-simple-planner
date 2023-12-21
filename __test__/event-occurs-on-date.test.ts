@@ -345,6 +345,27 @@ const eventOccursOnDateTestCases: eventOccursOnDateTestCase[] = [
     },
     expectedBool: true,
   },
+  {
+    name: 'An event that happens on Election Day should not be listed as happening on January 3, 2023',
+    date: '20230103',
+    event: {
+      name: 'Election Day',
+      description: undefined,
+      calendar: 'holidays',
+      occurrenceInfo: {
+        time: undefined,
+        months: [],
+        day: 0,
+        daysOfWeek: [],
+        weeks: [],
+        isEaster: false,
+        isElectionDay: true,
+        isGoodFriday: false,
+        isPalmSunday: false,
+      },
+    },
+    expectedBool: false,
+  },
 ];
 
 describe('Event Occurs on Date', () => {

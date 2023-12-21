@@ -104,7 +104,7 @@ function createEventFragment(event: CalendarEvent): DocumentFragment {
   return createFragment((el: DocumentFragment) => {
     const nameHeader =el.createSpan({text: event.name});
     if (event.calendar && event.calendar.trim() != '') {
-      nameHeader.createEl('i', {text: ` (${event.calendar})`});
+      nameHeader.createEl('i', {text: ` (${event.calendar.replaceAll('|', ' ')})`});
     }
 
     el.createEl('br');

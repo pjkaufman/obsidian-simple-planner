@@ -30,24 +30,35 @@ export class AddEditEventModal extends Modal {
               });
         });
 
-    new Setting(contentEl).setName('Calendar(s):')
-        .addText((text: TextComponent) => {
-          text.setValue(this.event.calendar)
-              .onChange((eventCalendar: string) => {
-                const calendars = eventCalendar.split(' ');
-                const existingCalendars = [];
-                for (const calendarName of calendars) {
-                  for (const calendar of this.calendars) {
-                    if (calendarName === calendar.name) {
-                      existingCalendars.push(calendar.name);
-                      break;
-                    }
-                  }
-                }
+    const calendarSetting = new Setting(contentEl).setName('Calendar(s):');
+    calendarSetting.controlEl.style.flexWrap = 'wrap';
 
-                this.event.calendar = existingCalendars.join(' ');
-              });
+    const currentCalendars = this.event.calendar.split('|');
+    for (const calendar of this.calendars) {
+      calendarSetting.controlEl.createSpan({text: calendar.name});
+
+      calendarSetting.addText((text: TextComponent) => {
+        text.inputEl.type = 'checkbox';
+        text.inputEl.checked = currentCalendars.includes(calendar.name);
+        text.onChange(() => {
+          if (text.inputEl.checked) {
+            currentCalendars.push(calendar.name);
+          } else {
+            currentCalendars.remove(calendar.name);
+          }
+
+          this.event.calendar = currentCalendars.join('|');
+
+          if (this.event.calendar.startsWith('|')) {
+            this.event.calendar = this.event.calendar.substring(1);
+          }
+
+          if (this.event.calendar.endsWith('|')) {
+            this.event.calendar = this.event.calendar.substring(0, this.event.calendar.length - 1) ?? '';
+          }
         });
+      });
+    }
 
     const occurrenceDiv = contentEl.createDiv();
     let timeText: TextComponent;
@@ -185,7 +196,17 @@ export class AddEditEventModal extends Modal {
           dropdown.addOption('Palm Sunday', 'Palm Sunday');
           dropdown.addOption('Election Day', 'Election Day');
 
-          dropdown.setValue('NA');
+          if (!this.event.occurrenceInfo) {
+            dropdown.setValue('NA');
+          } else if (this.event.occurrenceInfo.isEaster) {
+            dropdown.setValue('Easter');
+          } else if (this.event.occurrenceInfo.isElectionDay) {
+            dropdown.setValue('Election Day');
+          } else if (this.event.occurrenceInfo.isPalmSunday) {
+            dropdown.setValue('Palm Sunday');
+          } else if (this.event.occurrenceInfo.isGoodFriday) {
+            dropdown.setValue('Good Friday');
+          }
 
           dropdown.onChange((value: string) => {
             this.event.occurrenceInfo.isEaster = false;
