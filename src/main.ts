@@ -3,10 +3,12 @@ import {DEFAULT_SETTINGS, SimplePlannerSettings} from './types';
 import {SampleSettingTab} from './settings';
 import {getRecurringEventsForDay, getWeeklyMonthlyYearlyEventsForDateRange} from './dates';
 import {WeeklyMonthlyYearlyEventCreateModal} from './ui/modals/weekly-monthly-yearly-event-create-modal';
+import {CreateEventsForDateRange} from './ui/modals/create-events-for-date-range-modal';
 
 // Remember to rename these classes and interfaces!
 export default class SimplePlanner extends Plugin {
   settings: SimplePlannerSettings;
+  private foldersVerifiedToExist: string[] = [];
 
   async onload() {
     await this.loadSettings();
@@ -26,8 +28,17 @@ export default class SimplePlanner extends Plugin {
         new WeeklyMonthlyYearlyEventCreateModal(this.app, this.settings.calendars, async (year: number, calendars: string[]) => {
           const startDate = year + '0101';
           const eventsForYear = this.getWeeklyMonthlyYearlyEventsForRange(startDate, year + '1231', calendars);
-          await this.createFiles(startDate, eventsForYear);
-          console.log();
+          await this.createFilesWithEvents(startDate, eventsForYear);
+        }).open();
+      },
+    });
+
+    this.addCommand({
+      id: 'simple-planner-create-calendar-events-for-range',
+      name: 'Create Events for Date Range',
+      callback: () => {
+        new CreateEventsForDateRange(this.app, async (startDate: string, endDate: string) => {
+          await this.createFilesForDateRange(startDate, endDate);
         }).open();
       },
     });
@@ -49,38 +60,76 @@ export default class SimplePlanner extends Plugin {
     await this.saveData(this.settings);
   }
 
-  private async createFiles(startDate: string, eventsOnDays: string[] | string[][]) {
+  private async createFilesWithEvents(startDate: string, eventsOnDays: string[] | string[][]) {
     if (!eventsOnDays || eventsOnDays.length == 0) {
       return;
     }
 
+    this.foldersVerifiedToExist = [];
+
+    const currentDate = moment(startDate, 'YYYYMMDD');
     if (typeof eventsOnDays[0] == 'string') {
-      await this.createFileIfItDoesNotExist(startDate);
+      await this.createFileIfItDoesNotExist(startDate, currentDate.year());
 
       return;
     }
 
-    const currentDate = moment(startDate, 'YYYYMMDD');
     for (const eventsForDay of eventsOnDays) {
       if (eventsForDay.length == 0) {
         currentDate.add(1, 'day');
         continue;
       }
 
-      await this.createFileIfItDoesNotExist(currentDate.format('YYYYMMDD'));
+      await this.createFileIfItDoesNotExist(currentDate.format('YYYYMMDD'), currentDate.year());
 
       currentDate.add(1, 'day');
     }
   }
 
-  private async createFileIfItDoesNotExist(date: string) {
-    const filePath = normalizePath(this.settings.plannerBaseFolderPath + '/' + date + '.md');
+  private async createFilesForDateRange(startDate: string, endDate: string) {
+    if (!startDate || !endDate) {
+      return;
+    }
+
+    this.foldersVerifiedToExist = [];
+
+    const start = moment(startDate, 'YYYYMMDD');
+    const end = moment(endDate, 'YYYYMMDD');
+    const amountOfDays = end.diff(start, 'days') + 1;
+
+    for (let index = 0; index < amountOfDays; index++) {
+      await this.createFileIfItDoesNotExist(start.format('YYYYMMDD'), start.year());
+
+      start.add(1, 'day');
+    }
+  }
+
+  private async createFileIfItDoesNotExist(date: string, year: number) {
+    const folderPath = normalizePath(this.settings.plannerBaseFolderPath + '/' + year);
+    const filePath = normalizePath(folderPath + '/' + date + '.md');
     const file = this.app.vault.getAbstractFileByPath(filePath);
 
     if (file) {
       return;
     }
 
+    await this.createFolderIfDoesNotExist(folderPath);
+
     await this.app.vault.create(filePath, '');
+  }
+
+  private async createFolderIfDoesNotExist(folderPath: string) {
+    if (this.foldersVerifiedToExist.includes(folderPath)) {
+      return;
+    }
+
+    this.foldersVerifiedToExist.push(folderPath);
+
+    const folder = this.app.vault.getAbstractFileByPath(folderPath);
+    if (folder) {
+      return;
+    }
+
+    await this.app.vault.createFolder(folderPath);
   }
 }
