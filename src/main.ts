@@ -5,7 +5,6 @@ import {getRecurringEventsForDay, getWeeklyMonthlyYearlyEventsForDateRange} from
 import {WeeklyMonthlyYearlyEventCreateModal} from './ui/modals/weekly-monthly-yearly-event-create-modal';
 import {CreateEventsForDateRange} from './ui/modals/create-events-for-date-range-modal';
 
-// Remember to rename these classes and interfaces!
 export default class SimplePlanner extends Plugin {
   settings: SimplePlannerSettings;
   private foldersVerifiedToExist: string[] = [];
