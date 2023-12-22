@@ -16,6 +16,7 @@ const eventOccursOnDateTestCases: eventOccursOnDateTestCase[] = [
       name: 'event',
       description: undefined,
       calendar: 'holidays',
+      isTask: false,
       occurrenceInfo: {
         time: undefined,
         months: [],
@@ -37,6 +38,7 @@ const eventOccursOnDateTestCases: eventOccursOnDateTestCase[] = [
       name: 'event',
       description: undefined,
       calendar: 'holidays',
+      isTask: false,
       occurrenceInfo: {
         time: undefined,
         months: [],
@@ -58,6 +60,7 @@ const eventOccursOnDateTestCases: eventOccursOnDateTestCase[] = [
       name: 'event',
       description: undefined,
       calendar: 'holidays',
+      isTask: false,
       occurrenceInfo: {
         time: undefined,
         months: [0],
@@ -79,6 +82,7 @@ const eventOccursOnDateTestCases: eventOccursOnDateTestCase[] = [
       name: 'event',
       description: undefined,
       calendar: 'something',
+      isTask: false,
       occurrenceInfo: {
         time: undefined,
         months: [11],
@@ -100,6 +104,7 @@ const eventOccursOnDateTestCases: eventOccursOnDateTestCase[] = [
       name: 'event',
       description: undefined,
       calendar: 'something',
+      isTask: false,
       occurrenceInfo: {
         time: undefined,
         months: [5],
@@ -121,6 +126,7 @@ const eventOccursOnDateTestCases: eventOccursOnDateTestCase[] = [
       name: 'event',
       description: undefined,
       calendar: 'something',
+      isTask: false,
       occurrenceInfo: {
         time: undefined,
         months: [],
@@ -142,6 +148,7 @@ const eventOccursOnDateTestCases: eventOccursOnDateTestCase[] = [
       name: 'event',
       description: undefined,
       calendar: 'something',
+      isTask: false,
       occurrenceInfo: {
         time: undefined,
         months: [],
@@ -163,6 +170,7 @@ const eventOccursOnDateTestCases: eventOccursOnDateTestCase[] = [
       name: 'event',
       description: undefined,
       calendar: 'something',
+      isTask: false,
       occurrenceInfo: {
         time: undefined,
         months: [],
@@ -184,6 +192,7 @@ const eventOccursOnDateTestCases: eventOccursOnDateTestCase[] = [
       name: 'Easter',
       description: undefined,
       calendar: 'holidays',
+      isTask: false,
       occurrenceInfo: {
         time: undefined,
         months: [],
@@ -205,6 +214,7 @@ const eventOccursOnDateTestCases: eventOccursOnDateTestCase[] = [
       name: 'Easter',
       description: undefined,
       calendar: 'holidays',
+      isTask: false,
       occurrenceInfo: {
         time: undefined,
         months: [],
@@ -226,6 +236,7 @@ const eventOccursOnDateTestCases: eventOccursOnDateTestCase[] = [
       name: 'Good Friday',
       description: undefined,
       calendar: 'holidays',
+      isTask: false,
       occurrenceInfo: {
         time: undefined,
         months: [],
@@ -247,6 +258,7 @@ const eventOccursOnDateTestCases: eventOccursOnDateTestCase[] = [
       name: 'Good Friday',
       description: undefined,
       calendar: 'holidays',
+      isTask: false,
       occurrenceInfo: {
         time: undefined,
         months: [],
@@ -268,6 +280,7 @@ const eventOccursOnDateTestCases: eventOccursOnDateTestCase[] = [
       name: 'Palm Sunday',
       description: undefined,
       calendar: 'holidays',
+      isTask: false,
       occurrenceInfo: {
         time: undefined,
         months: [],
@@ -289,6 +302,7 @@ const eventOccursOnDateTestCases: eventOccursOnDateTestCase[] = [
       name: 'Palm Sunday',
       description: undefined,
       calendar: 'holidays',
+      isTask: false,
       occurrenceInfo: {
         time: undefined,
         months: [],
@@ -310,6 +324,7 @@ const eventOccursOnDateTestCases: eventOccursOnDateTestCase[] = [
       name: 'Election Day',
       description: undefined,
       calendar: 'holidays',
+      isTask: false,
       occurrenceInfo: {
         time: undefined,
         months: [],
@@ -331,6 +346,7 @@ const eventOccursOnDateTestCases: eventOccursOnDateTestCase[] = [
       name: 'Election Day',
       description: undefined,
       calendar: 'holidays',
+      isTask: false,
       occurrenceInfo: {
         time: undefined,
         months: [],
@@ -352,6 +368,7 @@ const eventOccursOnDateTestCases: eventOccursOnDateTestCase[] = [
       name: 'Election Day',
       description: undefined,
       calendar: 'holidays',
+      isTask: false,
       occurrenceInfo: {
         time: undefined,
         months: [],

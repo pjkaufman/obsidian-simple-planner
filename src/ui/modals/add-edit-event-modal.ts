@@ -1,4 +1,4 @@
-import {App, DropdownComponent, Modal, Notice, Setting, TextComponent} from 'obsidian';
+import {App, DropdownComponent, Modal, Notice, Setting, TextComponent, ToggleComponent} from 'obsidian';
 import {Calendar, CalendarEvent} from '../../types';
 import {daysOfWeekLetters, monthAbbreviations, weekOfMonth} from '../../event';
 
@@ -27,6 +27,14 @@ export class AddEditEventModal extends Modal {
           text.setValue(this.event.description)
               .onChange((eventDescription: string) => {
                 this.event.description = eventDescription;
+              });
+        });
+
+    new Setting(contentEl).setName('Is Task:')
+        .addToggle((toggle: ToggleComponent) => {
+          toggle.setValue(this.event.isTask)
+              .onChange((isTask: boolean) => {
+                this.event.isTask = isTask;
               });
         });
 

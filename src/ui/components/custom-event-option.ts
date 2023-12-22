@@ -16,6 +16,7 @@ export class CustomEventOption extends AddCustomRow {
             name: '',
             description: undefined,
             calendar: '',
+            isTask: false,
             occurrenceInfo: {
               time: undefined,
               months: null,
