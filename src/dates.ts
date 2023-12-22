@@ -65,7 +65,7 @@ export function getRecurringEventsForDay(date: string | undefined, events: Calen
   return applicableEvents.join('\n');
 }
 
-export function convertEventToString(event: CalendarEvent, boldEventNames: boolean = false,): string {
+export function convertEventToString(event: CalendarEvent, boldEventNames: boolean = false): string {
   const eventIsAllDayEvent = !event.occurrenceInfo || event.occurrenceInfo.time == undefined || event.occurrenceInfo.time.trim() == '';
   let eventInfoString = '- ';
   if (event.isTask || !eventIsAllDayEvent) {
@@ -79,7 +79,7 @@ export function convertEventToString(event: CalendarEvent, boldEventNames: boole
 
   let name = event.name;
   if (boldEventNames) {
-    name = `**${name}**`
+    name = `**${name}**`;
   }
 
   eventInfoString += `${name}</mark>`;

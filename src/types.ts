@@ -1,3 +1,5 @@
+import {TFile} from 'obsidian';
+
 export type CalendarEvent = {
   name: string,
   description: string | undefined,
@@ -34,3 +36,13 @@ export const DEFAULT_SETTINGS: SimplePlannerSettings = {
   calendars: [],
   plannerBaseFolderPath: '',
 };
+
+export type TemplaterNoteCreateCallbackEntry = {
+  content: string,
+  file: TFile
+}
+
+export type dateFileInfo = {
+  folder: string,
+  path: string,
+}

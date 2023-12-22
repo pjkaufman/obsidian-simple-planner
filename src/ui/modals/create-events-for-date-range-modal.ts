@@ -4,7 +4,7 @@ import {datePickerFormat} from '../settings/date-picker-setting';
 
 export class CreateEventsForDateRange extends Modal {
   public dateRange: DateRangePickerSetting;
-  constructor(app: App, private submitCallback: (startDate: string, endDate: string) => Promise<void>) {
+  constructor(app: App, private submitCallback: (startDate: string, endDate: string) => void) {
     super(app);
   }
 

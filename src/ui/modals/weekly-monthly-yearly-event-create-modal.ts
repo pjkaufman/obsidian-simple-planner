@@ -4,7 +4,7 @@ import {Calendar} from '../../types';
 export class WeeklyMonthlyYearlyEventCreateModal extends Modal {
   public selectedCalendars: string[] = [];
   public selectedYear: number;
-  constructor(app: App, public calendars: Calendar[], private submitCallback: (year: number, calendars: string[]) => Promise<void>) {
+  constructor(app: App, public calendars: Calendar[], private submitCallback: (year: number, calendars: string[]) => void) {
     super(app);
   }
 
