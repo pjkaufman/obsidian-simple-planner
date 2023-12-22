@@ -49,10 +49,12 @@ export function getRecurringEventsForDay(date: string | undefined, events: Calen
     return '';
   }
 
+  const sortedEvents = sortEvents(events);
+
   const applicableEvents = [];
   // const momentDate = moment(date, 'YYYYMMDD');
   // const dayOfWeek = momentDate.day();
-  for (const event of events) {
+  for (const event of sortedEvents) {
     if (skipEvent(event, calendarsToInclude, calendarsToIgnore)) {
       continue;
     }
@@ -142,7 +144,7 @@ export function eventOccursOnDate(date: string, event: CalendarEvent): boolean {
   return true;
 }
 
-export function getEaster(year: number) {
+function getEaster(year: number) {
   const C = Math.floor(year/100);
   const N = year - 19*Math.floor(year/19);
   const K = Math.floor((C - 17)/25);
@@ -258,4 +260,30 @@ export function getWeeklyMonthlyYearlyEventsForDateRange(startDate: string | und
   }
 
   return eventsForRange;
+}
+
+function sortEvents(events: CalendarEvent[]): CalendarEvent[] {
+  if (!events || events.length < 2) {
+    return events;
+  }
+
+  return events.toSorted((event1: CalendarEvent, event2: CalendarEvent) => {
+    const event1IsAllDay = !event1.occurrenceInfo || event1.occurrenceInfo.time == undefined;
+    const event2IsAllDay = !event2.occurrenceInfo || event2.occurrenceInfo.time == undefined;
+
+    if (event1IsAllDay && event2IsAllDay) {
+      return 0;
+    } else if (event1IsAllDay) {
+      return -1;
+    } else if (event2IsAllDay) {
+      return 1;
+    }
+
+    const event1StartTime = event1.occurrenceInfo.time.split('-')[0].trim().replaceAll(':', '');
+    const event2StartTime = event2.occurrenceInfo.time.split('-')[0].trim().replaceAll(':', '');
+    const startTime1 = parseInt(event1StartTime, 10);
+    const startTime2 = parseInt(event2StartTime, 10);
+
+    return startTime1 - startTime2;
+  });
 }
