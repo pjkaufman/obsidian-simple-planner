@@ -14,6 +14,7 @@ const getCalendarEventToStringTestCases: calendarEventToStringTestCase[] = [
       name: 'event',
       description: undefined,
       calendar: 'holidays',
+      isTask: false,
       occurrenceInfo: {
         time: undefined,
         months: [],
@@ -26,7 +27,7 @@ const getCalendarEventToStringTestCases: calendarEventToStringTestCase[] = [
         isPalmSunday: false,
       },
     },
-    expectedString: `- [ ] <mark class="holidays">event</mark>`,
+    expectedString: `- <mark class="holidays">event</mark>`,
   },
   {
     name: 'An event with time info is properly displayed',
@@ -34,6 +35,7 @@ const getCalendarEventToStringTestCases: calendarEventToStringTestCase[] = [
       name: 'Running of the Bulls',
       description: undefined,
       calendar: 'personal',
+      isTask: false,
       occurrenceInfo: {
         time: '16:00 - 19:00',
         months: [],
@@ -54,6 +56,7 @@ const getCalendarEventToStringTestCases: calendarEventToStringTestCase[] = [
       name: 'Running of the Bulls',
       description: 'Run for fun!',
       calendar: 'fun-times',
+      isTask: false,
       occurrenceInfo: {
         time: '16:00 - 19:00',
         months: [],
@@ -74,6 +77,7 @@ const getCalendarEventToStringTestCases: calendarEventToStringTestCase[] = [
       name: 'An event',
       description: '',
       calendar: 'personal|other',
+      isTask: false,
       occurrenceInfo: {
         time: '16:00 - 19:00',
         months: [],
@@ -87,6 +91,27 @@ const getCalendarEventToStringTestCases: calendarEventToStringTestCase[] = [
       },
     },
     expectedString: `- [ ] <mark class="personal other">16:00 - 19:00 An event</mark>`,
+  },
+  {
+    name: 'An all day that is a task is properly rendered with a checkbox',
+    event: {
+      name: 'An event',
+      description: '',
+      calendar: 'personal',
+      isTask: true,
+      occurrenceInfo: {
+        time: '',
+        months: [],
+        day: 0,
+        daysOfWeek: [],
+        weeks: [],
+        isEaster: false,
+        isElectionDay: false,
+        isGoodFriday: false,
+        isPalmSunday: false,
+      },
+    },
+    expectedString: `- [ ] <mark class="personal">An event</mark>`,
   },
 ];
 

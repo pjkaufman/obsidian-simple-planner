@@ -3,6 +3,7 @@ export type CalendarEvent = {
   description: string | undefined,
   calendar: string,
   occurrenceInfo: OccurrenceInfo,
+  isTask: boolean,
 };
 
 export type OccurrenceInfo = {

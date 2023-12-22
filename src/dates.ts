@@ -82,8 +82,14 @@ export function getRecurringEventsForDay(date: string | undefined, events: Calen
 }
 
 export function convertEventToString(event: CalendarEvent): string {
-  let eventInfoString = `- [ ] <mark class="${event.calendar.replaceAll('|', ' ')}">`;
-  if (event.occurrenceInfo.time != undefined) {
+  const eventIsAllDayEvent = !event.occurrenceInfo || event.occurrenceInfo.time == undefined || event.occurrenceInfo.time.trim() == '';
+  let eventInfoString = '- ';
+  if (event.isTask || !eventIsAllDayEvent) {
+    eventInfoString += '[ ] ';
+  }
+
+  eventInfoString += `<mark class="${event.calendar.replaceAll('|', ' ')}">`;
+  if (!eventIsAllDayEvent) {
     eventInfoString += event.occurrenceInfo.time + ' ';
   }
 
