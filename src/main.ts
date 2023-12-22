@@ -8,6 +8,9 @@ import {CreateEventsForDateRange} from './ui/modals/create-events-for-date-range
 export default class SimplePlanner extends Plugin {
   settings: SimplePlannerSettings;
   private foldersVerifiedToExist: string[] = [];
+	private msDelay: number = 250;
+	private xthFileToCreate: number = 1;
+	// private eventRefs = [];
 
   async onload() {
     await this.loadSettings();
@@ -42,6 +45,51 @@ export default class SimplePlanner extends Plugin {
       },
     });
   }
+
+	// addEvents() {
+	// 	const eventRef = this.app.workspace.on('templater:new-note-from-template', this.validateFileContentSeemsRight);
+	// 	if (eventRef) {
+	// 		this.eventRefs.push(eventRef);
+	// 	}
+	// }
+
+	// validateFileContentSeemsRight = function(...args) {
+  //   if (args.length > 0) {
+	// 		console.log(args);
+      // const fileInfo = args[0],
+      //   fileDate = moment(fileInfo.file.basename, momentFormat).format('MM/DD/YYYY'),
+      //   correctFileIndicator = `date: ${fileDate}`,
+      //   fileSeemsCorrect = fileInfo.content.includes(correctFileIndicator);
+
+      // if (fileSeemsCorrect === false) {
+      //   console.error(`Creating holidays/birthdays for ${fileDate} did not generate the expected date contents: ${correctFileIndicator}.`); 
+      // }
+  //   }
+  // }
+
+	/**
+	 
+
+if (holidaysInRestOfYear) {
+  for (const [index, holiday] of holidaysInRestOfYear.entries()) {
+    if (holiday.length > 0) {
+        await createFileIfNotExists(index, folderPath, templateFile, tFolder)
+    }
+  }
+}
+
+if (birthdaysInRestOfYear) {
+  for (const [index, birthday] of birthdaysInRestOfYear.entries()) {
+    if (birthday.length > 0 && holidaysInRestOfYear[index].length < 1) {
+        await createFileIfNotExists(index, folderPath, templateFile, tFolder)
+    }
+  }
+}
+
+setTimeout(function(){
+  app.workspace.offref(eventRef);
+}, xthFileToCreate * 2 * timeDelayInMilliseconds);
+	 */
 
   getEventsForDay(date: string | undefined, boldEventNames: boolean = false, calendarsToInclude: string[] = [], calendarsToIgnore: string[] = []): string {
     return getRecurringEventsForDay(date, this.settings.events, boldEventNames, calendarsToInclude, calendarsToIgnore);
@@ -85,6 +133,8 @@ export default class SimplePlanner extends Plugin {
 
     this.foldersVerifiedToExist = [];
 
+		this.xthFileToCreate = 1;
+
     const currentDate = moment(startDate, 'YYYYMMDD');
     if (typeof eventsOnDays[0] == 'string') {
       await this.createFileIfItDoesNotExist(startDate, currentDate.year());
@@ -115,6 +165,7 @@ export default class SimplePlanner extends Plugin {
     const end = moment(endDate, 'YYYYMMDD');
     const amountOfDays = end.diff(start, 'days') + 1;
 
+		this.xthFileToCreate = 1;
     for (let index = 0; index < amountOfDays; index++) {
       await this.createFileIfItDoesNotExist(start.format('YYYYMMDD'), start.year());
 
@@ -133,7 +184,11 @@ export default class SimplePlanner extends Plugin {
 
     await this.createFolderIfDoesNotExist(folderPath);
 
-    await this.app.vault.create(filePath, '');
+		setTimeout(async function(){
+			await this.app.vault.create(filePath, '');
+		}, this.xthFileToCreate * this.msDelay);
+
+		this.xthFileToCreate++;
   }
 
   private async createFolderIfDoesNotExist(folderPath: string) {

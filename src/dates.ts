@@ -52,8 +52,6 @@ export function getRecurringEventsForDay(date: string | undefined, events: Calen
   const sortedEvents = sortEvents(events);
 
   const applicableEvents = [];
-  // const momentDate = moment(date, 'YYYYMMDD');
-  // const dayOfWeek = momentDate.day();
   for (const event of sortedEvents) {
     if (skipEvent(event, calendarsToInclude, calendarsToIgnore)) {
       continue;
@@ -62,20 +60,6 @@ export function getRecurringEventsForDay(date: string | undefined, events: Calen
     if (eventOccursOnDate(date, event)) {
       applicableEvents.push(convertEventToString(event, boldEventNames));
     }
-    // const event = events[i];
-    // if ((event.month === undefined || event.month.includes(momentDate.month())) && (event.week === undefined || xthDayOfMonth(date, dayOfWeek, event.week) === date)) {
-    //     if (event.time === undefined) {
-    //         eventInfoString = '- [ ] <mark class="' + event.calendar + '">' + event.name + '</mark>';
-    //     } else {
-    //         eventInfoString = '- [ ] <mark class="' + event.calendar + '">' + event.time + ' ' + event.name + '</mark>';
-    //     }
-
-    //     if (event.description) {
-    //         eventInfoString += '\n  - ' + event.description;
-    //     }
-
-    //     applicableEvents.push(eventInfoString);
-    // }
   }
 
   return applicableEvents.join('\n');
@@ -243,19 +227,24 @@ export function getWeeklyMonthlyYearlyEventsForDateRange(startDate: string | und
   const amountOfDays = end.diff(start, 'days') + 1;
   let i = 0;
   const eventsForRange: string[][] = [];
+
+  const weeklyMonthlyYearlyEvents: CalendarEvent[] = [];
+  for (const event of events) {
+    if (skipEvent(event, calendarsToInclude, calendarsToIgnore)) {
+      continue;
+    }
+
+    if (event.occurrenceInfo.day == 0 && (!event.occurrenceInfo.weeks || event.occurrenceInfo.weeks.length == 0) && (!event.occurrenceInfo.months || event.occurrenceInfo.months.length == 0) && !event.occurrenceInfo.isEaster && !event.occurrenceInfo.isElectionDay && !event.occurrenceInfo.isGoodFriday && !event.occurrenceInfo.isPalmSunday) {
+      continue;
+    }
+
+    weeklyMonthlyYearlyEvents.push(event);
+  }
+
   while (i < amountOfDays) {
     const eventsForDate: string[] = [];
-    // const currentMonth = currentDate.month();
     const currentDateString = currentDate.format('YYYYMMDD');
-    for (const event of events) {
-      if (skipEvent(event, calendarsToInclude, calendarsToIgnore)) {
-        continue;
-      }
-
-      if (event.occurrenceInfo.day == 0 && (!event.occurrenceInfo.weeks || event.occurrenceInfo.weeks.length == 0) && (!event.occurrenceInfo.months || event.occurrenceInfo.months.length == 0) && !event.occurrenceInfo.isEaster && !event.occurrenceInfo.isElectionDay && !event.occurrenceInfo.isGoodFriday && !event.occurrenceInfo.isPalmSunday) {
-        continue;
-      }
-
+    for (const event of weeklyMonthlyYearlyEvents) {
       if (eventOccursOnDate(currentDateString, event)) {
         eventsForDate.push(convertEventToString(event));
       }
