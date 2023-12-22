@@ -81,6 +81,8 @@ export default class SimplePlanner extends Plugin {
       if (this.datesToCreateFilesFor.length > 0) {
         const dateToCreate = this.datesToCreateFilesFor[0];
         this.createFile(this.getFileInfoFromDateAndYear(dateToCreate, moment(dateToCreate, 'YYYYMMDD').year()));
+      } else {
+        new Notice('Finished creating files for applicable dates');
       }
     }
   };
