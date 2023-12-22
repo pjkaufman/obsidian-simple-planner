@@ -43,13 +43,32 @@ export default class SimplePlanner extends Plugin {
     });
   }
 
-  getEventsForDay(date: string | undefined, calendarsToInclude: string[] = [], calendarsToIgnore: string[] = []): string {
-    return getRecurringEventsForDay(date, this.settings.events, calendarsToInclude, calendarsToIgnore);
+  getEventsForDay(date: string | undefined, boldEventNames: boolean = false, calendarsToInclude: string[] = [], calendarsToIgnore: string[] = []): string {
+    return getRecurringEventsForDay(date, this.settings.events, boldEventNames, calendarsToInclude, calendarsToIgnore);
   }
 
   getWeeklyMonthlyYearlyEventsForRange(startDate: string | undefined, endDate: string | undefined, calendarsToInclude: string[] = [], calendarsToIgnore: string[] = []): string[] | string[][] {
     return getWeeklyMonthlyYearlyEventsForDateRange(startDate, endDate, this.settings.events, calendarsToInclude, calendarsToIgnore);
   }
+
+	getBirthdayAndHolidaySectionForDay(holidaysForDay: string, birthdaysForDay: string) {
+    if ((birthdaysForDay == undefined || birthdaysForDay == "") && (holidaysForDay == undefined || holidaysForDay == "")) {
+        return '';
+    }
+
+    let sectionInfo = '\n';
+
+    if (birthdaysForDay != undefined && birthdaysForDay != "") {
+          sectionInfo += `## Birthdays\n\n${birthdaysForDay}\n`;
+    }
+
+    if (holidaysForDay != undefined && holidaysForDay != "") {
+				sectionInfo += `## Holidays\n\n${holidaysForDay}\n`;
+    }
+
+    return sectionInfo;
+}
+
 
   async loadSettings() {
     this.settings = Object.assign({}, DEFAULT_SETTINGS, await this.loadData());

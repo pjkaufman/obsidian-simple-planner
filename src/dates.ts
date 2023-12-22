@@ -44,7 +44,7 @@ function xthDayOfMonth(startDate: string, dayOfWeek: number, weekNumber: number)
   return date.format('YYYYMMDD');
 }
 
-export function getRecurringEventsForDay(date: string | undefined, events: CalendarEvent[], calendarsToInclude: string[] = [], calendarsToIgnore: string[] = []) {
+export function getRecurringEventsForDay(date: string | undefined, events: CalendarEvent[], boldEventNames: boolean = false, calendarsToInclude: string[] = [], calendarsToIgnore: string[] = []) {
   if (date == undefined) {
     return '';
   }
@@ -60,7 +60,7 @@ export function getRecurringEventsForDay(date: string | undefined, events: Calen
     }
 
     if (eventOccursOnDate(date, event)) {
-      applicableEvents.push(convertEventToString(event));
+      applicableEvents.push(convertEventToString(event, boldEventNames));
     }
     // const event = events[i];
     // if ((event.month === undefined || event.month.includes(momentDate.month())) && (event.week === undefined || xthDayOfMonth(date, dayOfWeek, event.week) === date)) {
@@ -81,7 +81,7 @@ export function getRecurringEventsForDay(date: string | undefined, events: Calen
   return applicableEvents.join('\n');
 }
 
-export function convertEventToString(event: CalendarEvent): string {
+export function convertEventToString(event: CalendarEvent, boldEventNames: boolean = false,): string {
   const eventIsAllDayEvent = !event.occurrenceInfo || event.occurrenceInfo.time == undefined || event.occurrenceInfo.time.trim() == '';
   let eventInfoString = '- ';
   if (event.isTask || !eventIsAllDayEvent) {
@@ -93,7 +93,12 @@ export function convertEventToString(event: CalendarEvent): string {
     eventInfoString += event.occurrenceInfo.time + ' ';
   }
 
-  eventInfoString += `${event.name}</mark>`;
+  let name = event.name;
+  if (boldEventNames) {
+    name = `**${name}**`
+  }
+
+  eventInfoString += `${name}</mark>`;
   if (event.description) {
     eventInfoString += `\n  - ${event.description}`;
   }
@@ -213,7 +218,7 @@ function skipEvent(event: CalendarEvent, calendarsToInclude: string[], calendars
     }
   }
 
-  let skip = true;
+  let skip = calendarsToInclude && calendarsToInclude.length > 0;
   for (const calendar of calendarsToInclude) {
     if (event.calendar.includes(calendar)) {
       skip = false;
@@ -247,7 +252,7 @@ export function getWeeklyMonthlyYearlyEventsForDateRange(startDate: string | und
         continue;
       }
 
-      if (event.occurrenceInfo.day == 0 && event.occurrenceInfo.daysOfWeek && event.occurrenceInfo.daysOfWeek.length == 0&& event.occurrenceInfo.weeks && event.occurrenceInfo.weeks.length == 0 && event.occurrenceInfo.months && event.occurrenceInfo.months.length == 0 && !event.occurrenceInfo.isEaster && !event.occurrenceInfo.isElectionDay && !event.occurrenceInfo.isGoodFriday && !event.occurrenceInfo.isPalmSunday) {
+      if (event.occurrenceInfo.day == 0 && (!event.occurrenceInfo.weeks || event.occurrenceInfo.weeks.length == 0) && (!event.occurrenceInfo.months || event.occurrenceInfo.months.length == 0) && !event.occurrenceInfo.isEaster && !event.occurrenceInfo.isElectionDay && !event.occurrenceInfo.isGoodFriday && !event.occurrenceInfo.isPalmSunday) {
         continue;
       }
 
